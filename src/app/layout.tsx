@@ -11,8 +11,8 @@ import { CookiesProvider } from 'next-client-cookies/server';
 import { ViewTransitions } from 'next-view-transitions';
 
 export const metadata = {
-    title: 'create-l3-app',
-    description: 'Simple Next.js Scaffold',
+    title: 'Safe Chat',
+    description: 'A secure messaging service.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
