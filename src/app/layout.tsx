@@ -28,9 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 enableSystem
                                 disableTransitionOnChange
                             >
-                                <main className="max-w-[1200px] bg-background relative mx-auto h-[100dvh]">
+                                <div className="w-full bg-background relative h-[100dvh]">
                                     <ViewTransitions>{children}</ViewTransitions>
-                                </main>
+                                </div>
                             </ThemeProvider>
                         </StoreProvider>
                     </LocalStorageProvider>
