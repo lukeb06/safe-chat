@@ -30,6 +30,18 @@ export default function LoginPage() {
         router.push('/app/messages');
     };
 
+    const demoLogin = (e: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const accessToken = await login('demouser1', 'password');
+
+        if (!accessToken) return alert('An error occurred');
+
+        cookies.set('accessToken', accessToken);
+        router.push('/app/messages');
+    }
+
     return (
         <div className="w-full h-full grid place-items-center">
             <div className="flex flex-col gap-8 items-center">
@@ -54,6 +66,8 @@ export default function LoginPage() {
                     </div>
 
                     <Button style={{ viewTransitionName: 'form-submit' }}>Login</Button>
+
+                    <Button variant="outline" onClick={demoLogin}>Demo Login</Button>
 
                     <p style={{ viewTransitionName: 'form-change' }}>
                         Don't have an account?{' '}
