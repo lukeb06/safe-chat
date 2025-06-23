@@ -1,9 +1,8 @@
-import { seedMessage, undoMessage } from './message';
+import { undoMessage } from './message';
 import { seedUser, undoUser } from './user';
 
 async function seed() {
     await seedUser();
-    await seedMessage();
 }
 
 async function undo() {
@@ -14,6 +13,7 @@ async function undo() {
 async function main() {
     await undo();
     await seed();
+    console.log('Seeded successfully');
 }
 
 main();

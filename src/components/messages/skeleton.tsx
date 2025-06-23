@@ -4,22 +4,6 @@ export default function ConvoListSkeleton() {
             <ConvoListItemSkeleton />
             <ConvoListItemSkeleton />
             <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
-            <ConvoListItemSkeleton />
         </>
     );
 }
