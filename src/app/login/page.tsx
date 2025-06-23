@@ -27,7 +27,7 @@ export default function LoginPage() {
         if (!accessToken) return alert('Invalid username or password');
 
         cookies.set('accessToken', accessToken);
-        router.push('/app');
+        router.push('/app/messages');
     };
 
     return (

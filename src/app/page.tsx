@@ -7,5 +7,5 @@ export default async function Page() {
 
     if (!accessToken) return redirect('/login');
 
-    return redirect('/app');
+    return redirect('/app/messages');
 }

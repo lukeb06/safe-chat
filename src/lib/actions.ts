@@ -129,3 +129,53 @@ export async function register(username: string, password: string) {
 
     return { accessToken, error: null };
 }
+
+export async function getMessagesWithUser(accessToken: string, userId: number) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return [];
+
+    const messages = await prisma.message.findMany({
+        where: {
+            OR: [
+                {
+                    authorId: myUser.id,
+                    recipientId: userId,
+                },
+                {
+                    authorId: userId,
+                    recipientId: myUser.id,
+                },
+            ],
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+    });
+
+    return messages;
+}
+
+export interface PublicUser {
+    id: number;
+    username: string;
+    displayName: string | null;
+    avatarUrl: string | null;
+}
+export async function getPublicUser(accessToken: string, userId: number) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return null;
+
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+        select: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
+        },
+    });
+
+    return user;
+}

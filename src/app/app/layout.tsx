@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     return (
         <div className="w-full h-full flex flex-col">
             <nav className="w-full bg-foreground/5 flex items-center p-4 gap-4 border-b">
-                <Link href="/app">
+                <Link href="/app/messages">
                     <h1 className="text-xl" style={{ viewTransitionName: 'title' }}>
                         safe-chat
                     </h1>
