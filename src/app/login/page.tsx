@@ -30,7 +30,7 @@ export default function LoginPage() {
         router.push('/app/messages');
     };
 
-    const demoLogin = (e: any) => {
+    const demoLogin = async (e: any) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -40,7 +40,7 @@ export default function LoginPage() {
 
         cookies.set('accessToken', accessToken);
         router.push('/app/messages');
-    }
+    };
 
     return (
         <div className="w-full h-full grid place-items-center">
