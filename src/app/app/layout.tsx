@@ -1,3 +1,4 @@
+import LogoutButton from '@/components/logout-button';
 import { ModeToggle } from '@/components/mode-toggle';
 import { getCookies } from 'next-client-cookies/server';
 import { Link } from 'next-view-transitions';
@@ -19,6 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 </Link>
 
                 <div className="flex-1 flex justify-end items-center gap-4">
+                    <LogoutButton />
                     <ModeToggle />
                 </div>
             </nav>
