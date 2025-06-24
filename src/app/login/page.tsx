@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Link, useTransitionRouter } from 'next-view-transitions';
 import { useCookies } from 'next-client-cookies';
-import { login } from '@/lib/actions';
+import { getUserFromAccessToken, login } from '@/lib/actions';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
     const cookies = useCookies();
+    const _accessToken = cookies.get('accessToken');
     const router = useTransitionRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,6 +44,14 @@ export default function LoginPage() {
         router.push('/app/messages');
     };
 
+    useEffect(() => {
+        (async () => {
+            if (!_accessToken) return;
+            const myUser = await getUserFromAccessToken(_accessToken);
+            if (myUser) router.push('/app/messages');
+        })();
+    });
+
     return (
         <div className="w-full h-full grid place-items-center">
             <div className="flex flex-col gap-8 items-center">
@@ -67,7 +77,9 @@ export default function LoginPage() {
 
                     <Button style={{ viewTransitionName: 'form-submit' }}>Login</Button>
 
-                    <Button variant="outline" onClick={demoLogin}>Demo Login</Button>
+                    <Button variant="outline" onClick={demoLogin}>
+                        Demo Login
+                    </Button>
 
                     <p style={{ viewTransitionName: 'form-change' }}>
                         Don't have an account?{' '}
