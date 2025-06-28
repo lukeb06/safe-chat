@@ -1,3 +1,4 @@
+import { undoChannel } from './channel';
 import { undoMessage } from './message';
 import { seedUser, undoUser } from './user';
 
@@ -8,6 +9,7 @@ async function seed() {
 async function undo() {
     await undoMessage();
     await undoUser();
+    await undoChannel();
 }
 
 async function main() {

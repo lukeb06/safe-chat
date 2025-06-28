@@ -19,21 +19,22 @@ model User {
   createdAt    DateTime @default(now())
 
   authoredMessages Message[] @relation(name: "authoredMessages")
-  recievedMessages Message[] @relation(name: "recievedMessages")
 
   friendshipsInitiated Friend[] @relation(name: "friendshipsInitiated")
   friendshipsReceived  Friend[] @relation(name: "friendshipsReceived")
+
+  ownerOfChannels Channel[] @relation(name: "ownerOfChannels")
 }
 
 model Message {
   id          Int      @id @default(autoincrement())
   authorId    Int
-  recipientId Int
+  channelName String
   content     String
   createdAt   DateTime @default(now())
 
-  author    User @relation(name: "authoredMessages", fields: [authorId], references: [id], onDelete: Cascade)
-  recipient User @relation(name: "recievedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+  author  User    @relation(name: "authoredMessages", fields: [authorId], references: [id], onDelete: Cascade)
+  channel Channel @relation(name: "channelMessages", fields: [channelName], references: [name], onDelete: Cascade)
 }
 
 model Friend {
@@ -44,4 +45,12 @@ model Friend {
 
   user   User @relation(name: "friendshipsInitiated", fields: [userId], references: [id], onDelete: Cascade)
   friend User @relation(name: "friendshipsReceived", fields: [friendId], references: [id], onDelete: Cascade)
+}
+
+model Channel {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  ownerId Int?
+  owner   User?     @relation(name: "ownerOfChannels", fields: [ownerId], references: [id], onDelete: Cascade)
+  Message Message[] @relation(name: "channelMessages")
 }

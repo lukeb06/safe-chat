@@ -29,7 +29,7 @@ export default function RegisterPage() {
         if (error || !accessToken) return alert(error || 'Unknown error');
 
         cookies.set('accessToken', accessToken);
-        router.push('/app/messages');
+        router.push('/app/channel');
     };
 
     return (

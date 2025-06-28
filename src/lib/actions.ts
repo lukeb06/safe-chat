@@ -2,7 +2,7 @@
 
 import { AccessToken, createAccessRefreshPair } from 'simple-web-tokens';
 import { prisma } from './prisma';
-import type { Message, User } from '../../generated/prisma';
+import type { Channel, Message, User } from '../../generated/prisma';
 import * as bcrypt from 'bcrypt';
 
 const PKEY = process.env.SECRET || 'key';
@@ -23,55 +23,6 @@ export async function getUserFromAccessToken(accessToken: string) {
     } catch (e) {
         return null;
     }
-}
-
-export async function getConversations(accessToken: string) {
-    const user = await getUserFromAccessToken(accessToken);
-    if (!user) return [];
-
-    const conversations = await prisma.message.findMany({
-        where: {
-            OR: [
-                {
-                    authorId: user.id,
-                },
-                {
-                    recipientId: user.id,
-                },
-            ],
-        },
-        orderBy: {
-            createdAt: 'desc',
-        },
-    });
-
-    const recents = new Map<string, Message>();
-
-    return await Promise.all(
-        conversations
-            .filter(c => {
-                const minId = Math.min(c.authorId, c.recipientId);
-                const maxId = Math.max(c.authorId, c.recipientId);
-                const key = `${minId}-${maxId}`;
-
-                if (recents.has(key)) return false;
-                recents.set(key, c);
-                return true;
-            })
-            .map(async c => ({
-                ...c,
-                author: await prisma.user.findUnique({
-                    where: {
-                        id: c.authorId,
-                    },
-                }),
-                recipient: await prisma.user.findUnique({
-                    where: {
-                        id: c.recipientId,
-                    },
-                }),
-            })),
-    );
 }
 
 export async function login(username: string, password: string) {
@@ -130,31 +81,6 @@ export async function register(username: string, password: string) {
     return { accessToken, error: null };
 }
 
-export async function getMessagesWithUser(accessToken: string, userId: number) {
-    const myUser = await getUserFromAccessToken(accessToken);
-    if (!myUser) return [];
-
-    const messages = await prisma.message.findMany({
-        where: {
-            OR: [
-                {
-                    authorId: myUser.id,
-                    recipientId: userId,
-                },
-                {
-                    authorId: userId,
-                    recipientId: myUser.id,
-                },
-            ],
-        },
-        orderBy: {
-            createdAt: 'desc',
-        },
-    });
-
-    return messages;
-}
-
 export interface PublicUser {
     id: number;
     username: string;
@@ -178,4 +104,166 @@ export async function getPublicUser(accessToken: string, userId: number) {
     });
 
     return user;
+}
+
+export async function editMessage(accessToken: string, messageId: number, newContent: string) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return null;
+
+    const message = await prisma.message.findUnique({
+        where: {
+            id: messageId,
+        },
+    });
+
+    if (!message) return null;
+    if (message.authorId !== myUser.id) return null;
+
+    const newMessage = await prisma.message.update({
+        where: {
+            id: messageId,
+        },
+        data: {
+            content: `${newContent} (edited)`,
+        },
+    });
+
+    return newMessage;
+}
+
+export async function deleteMessage(accessToken: string, messageId: number) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return null;
+
+    const message = await prisma.message.findUnique({
+        where: {
+            id: messageId,
+        },
+    });
+
+    if (!message) return null;
+    if (message.authorId !== myUser.id) return null;
+
+    await prisma.message.delete({
+        where: {
+            id: messageId,
+        },
+    });
+
+    return true;
+}
+
+export async function getChannels(accessToken: string) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return { myChannels: [], otherChannels: [] };
+
+    const channels = await prisma.channel.findMany({
+        orderBy: {
+            id: 'asc',
+        },
+    });
+
+    const myChannels = channels.filter(c => c.ownerId === myUser.id);
+    const otherChannels = channels.filter(c => c.ownerId !== myUser.id);
+
+    return { myChannels, otherChannels };
+}
+
+export async function createChannel(name: string, accessToken: string) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return null;
+
+    const existingChannel = await prisma.channel.findUnique({
+        where: {
+            name,
+        },
+    });
+    if (existingChannel) return null;
+
+    if (name === 'new') return null;
+    if (name === 'edit') return null;
+
+    const channel = await prisma.channel.create({
+        data: {
+            name,
+            ownerId: myUser.id,
+        },
+    });
+
+    return channel;
+}
+
+export async function getMessagesFromChannel(channelName: string, accessToken: string) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return [];
+
+    const messages = await prisma.message.findMany({
+        where: {
+            channelName,
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+    });
+
+    return await Promise.all(
+        messages.map(async m => ({ ...m, author: await getPublicUser(accessToken, m.authorId) })),
+    );
+}
+
+export async function renameChannel(accessToken: string, channelId: number, newName: string) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return null;
+
+    const channel = await prisma.channel.findUnique({
+        where: {
+            id: channelId,
+        },
+    });
+
+    if (!channel) return null;
+    if (channel.ownerId !== myUser.id) return null;
+
+    const existingChannel = await prisma.channel.findUnique({
+        where: {
+            name: newName,
+        },
+    });
+    if (existingChannel) return null;
+
+    if (newName === 'new') return null;
+    if (newName === 'edit') return null;
+
+    const newChannel = await prisma.channel.update({
+        where: {
+            id: channelId,
+        },
+        data: {
+            name: newName,
+        },
+    });
+
+    return newChannel;
+}
+
+export async function deleteChannel(accessToken: string, channelId: number) {
+    const myUser = await getUserFromAccessToken(accessToken);
+    if (!myUser) return null;
+
+    const channel = await prisma.channel.findUnique({
+        where: {
+            id: channelId,
+        },
+    });
+
+    if (!channel) return null;
+    if (channel.ownerId !== myUser.id) return null;
+
+    await prisma.channel.delete({
+        where: {
+            id: channelId,
+        },
+    });
+
+    return true;
 }

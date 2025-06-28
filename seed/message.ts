@@ -1,10 +1,10 @@
 import { prisma } from '@/lib/prisma';
 
-export async function createMessage(authorId: number, recipientId: number, content: string) {
+export async function createMessage(authorId: number, channelName: string, content: string) {
     await prisma.message.create({
         data: {
             authorId,
-            recipientId,
+            channelName,
             content,
         },
     });

@@ -29,7 +29,7 @@ export default function LoginPage() {
         if (!accessToken) return alert('Invalid username or password');
 
         cookies.set('accessToken', accessToken);
-        router.push('/app/messages');
+        router.push('/app/channel');
     };
 
     const demoLogin = async (e: any) => {
@@ -41,14 +41,14 @@ export default function LoginPage() {
         if (!accessToken) return alert('An error occurred');
 
         cookies.set('accessToken', accessToken);
-        router.push('/app/messages');
+        router.push('/app/channel');
     };
 
     useEffect(() => {
         (async () => {
             if (!_accessToken) return;
             const myUser = await getUserFromAccessToken(_accessToken);
-            if (myUser) router.push('/app/messages');
+            if (myUser) router.push('/app/channel');
         })();
     });
 

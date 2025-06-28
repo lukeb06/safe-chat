@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import * as bcrypt from 'bcrypt';
 import { createMessage } from './message';
+import { createChannel } from './channel';
 
 async function createUser(username: string, password: string) {
     const salt = await bcrypt.genSalt(10);
@@ -21,18 +22,20 @@ export async function seedUser() {
     const user3 = await createUser('demouser3', 'password2');
     const user4 = await createUser('demouser4', 'password3');
 
-    await createMessage(user1.id, user2.id, 'User 1 to User 2');
-    await createMessage(user1.id, user3.id, 'User 1 to User 3');
-    await createMessage(user1.id, user4.id, 'User 1 to User 4');
-    await createMessage(user2.id, user1.id, 'User 2 to User 1');
-    await createMessage(user2.id, user3.id, 'User 2 to User 3');
-    await createMessage(user2.id, user4.id, 'User 2 to User 4');
-    await createMessage(user3.id, user1.id, 'User 3 to User 1');
-    await createMessage(user3.id, user2.id, 'User 3 to User 2');
-    await createMessage(user3.id, user4.id, 'User 3 to User 4');
-    await createMessage(user4.id, user1.id, 'User 4 to User 1');
-    await createMessage(user4.id, user2.id, 'User 4 to User 2');
-    await createMessage(user4.id, user3.id, 'User 4 to User 3');
+    await createChannel('global');
+    await createChannel('web-dev', user1.id);
+    await createChannel('web-design', user2.id);
+    await createChannel('mobile-dev', user3.id);
+    await createChannel('mobile-design', user4.id);
+
+    await createMessage(user1.id, 'global', 'Hello world!');
+    await createMessage(user1.id, 'web-dev', 'Hey!');
+    await createMessage(user1.id, 'web-design', 'Whats up!');
+    await createMessage(user2.id, 'web-design', 'Hey!');
+    await createMessage(user3.id, 'mobile-dev', 'Hey!');
+    await createMessage(user4.id, 'mobile-design', 'Whats up!');
+    await createMessage(user4.id, 'mobile-design', 'Hey!');
+    await createMessage(user4.id, 'mobile-design', 'Hey!');
 }
 
 export async function undoUser() {
