@@ -1,5 +1,4 @@
 import ChannelList from '@/components/channels';
-import ConvoList from '@/components/messages';
 
 export default function MessagesLayout({ children }: { children: React.ReactNode }) {
     return (
