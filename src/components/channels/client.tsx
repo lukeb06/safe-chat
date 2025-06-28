@@ -15,11 +15,8 @@ export default function ChannelsClient({
     const [store, modifyStore] = useStore();
 
     useEffect(() => {
-        const newStore: Record<string, any> = {};
-        if (myChannels && !store.myChannels) newStore.myChannels = myChannels;
-        if (otherChannels && !store.otherChannels) newStore.otherChannels = otherChannels;
-        modifyStore(newStore);
-    }, [myChannels, otherChannels]);
+        modifyStore({ myChannels, otherChannels });
+    }, []);
 
     return (
         <>
