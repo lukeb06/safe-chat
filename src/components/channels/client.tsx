@@ -22,7 +22,7 @@ export default function ChannelsClient({
         <>
             <h2>My Channels</h2>
             {store.myChannels &&
-                store.myChannels?.map((c: Channel) => (
+                (store.myChannels || myChannels).map((c: Channel) => (
                     <Link
                         href={`/app/channel/${c.name}`}
                         key={c.id}
@@ -35,7 +35,7 @@ export default function ChannelsClient({
                 ))}
             <h2>Other Channels</h2>
             {store.otherChannels &&
-                store.otherChannels?.map((c: Channel) => (
+                (store.otherChannels || otherChannels).map((c: Channel) => (
                     <Link
                         href={`/app/channel/${c.name}`}
                         key={c.id}
