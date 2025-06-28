@@ -21,31 +21,29 @@ export default function ChannelsClient({
     return (
         <>
             <h2>My Channels</h2>
-            {store.myChannels &&
-                (store.myChannels || myChannels).map((c: Channel) => (
-                    <Link
-                        href={`/app/channel/${c.name}`}
-                        key={c.id}
-                        className="flex items-center gap-4 py-2 px-4 hover:bg-foreground/5 rounded cursor-pointer"
-                    >
-                        <div className="flex flex-col gap-1">
-                            <span>#{c.name}</span>
-                        </div>
-                    </Link>
-                ))}
+            {(store.myChannels || myChannels).map((c: Channel) => (
+                <Link
+                    href={`/app/channel/${c.name}`}
+                    key={c.id}
+                    className="flex items-center gap-4 py-2 px-4 hover:bg-foreground/5 rounded cursor-pointer"
+                >
+                    <div className="flex flex-col gap-1">
+                        <span>#{c.name}</span>
+                    </div>
+                </Link>
+            ))}
             <h2>Other Channels</h2>
-            {store.otherChannels &&
-                (store.otherChannels || otherChannels).map((c: Channel) => (
-                    <Link
-                        href={`/app/channel/${c.name}`}
-                        key={c.id}
-                        className="flex items-center gap-4 py-2 px-4 hover:bg-foreground/5 rounded cursor-pointer"
-                    >
-                        <div className="flex flex-col gap-1">
-                            <span>#{c.name}</span>
-                        </div>
-                    </Link>
-                ))}
+            {(store.otherChannels || otherChannels).map((c: Channel) => (
+                <Link
+                    href={`/app/channel/${c.name}`}
+                    key={c.id}
+                    className="flex items-center gap-4 py-2 px-4 hover:bg-foreground/5 rounded cursor-pointer"
+                >
+                    <div className="flex flex-col gap-1">
+                        <span>#{c.name}</span>
+                    </div>
+                </Link>
+            ))}
         </>
     );
 }
